@@ -2,3 +2,5 @@
 *.xz
 *.exe
 *.bin
+*.zip
+*.lz4
