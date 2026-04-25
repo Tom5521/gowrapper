@@ -2,13 +2,14 @@ package main
 
 import (
 	"bytes"
+	_ "embed"
 	"errors"
+	"fmt"
 	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
-
-	_ "embed"
+	"strings"
 
 	"github.com/Tom5521/gowrapper/util"
 	"github.com/spf13/cobra"
@@ -68,26 +69,56 @@ var root = cobra.Command{
 			return err
 		}
 
+		cmd := newCmd("go", "mod", "init", "template")
+		cmd.Dir = tmpDir
+
+		slog.Info("Configuring go modules...")
+		err = cmd.Run()
+		if err != nil {
+			return err
+		}
+		cmd = newCmd("go", "mod", "tidy")
+		cmd.Dir = tmpDir
+		err = cmd.Run()
+		if err != nil {
+			return err
+		}
+
 		fullOut, err := filepath.Abs(Output)
 		if err != nil {
 			return err
 		}
 
-		slog.Info("Building binary...")
-		cmd := exec.Command(
-			"go",
-			"build",
-			"-o", fullOut,
+		var ldflags string
+		if AppName != "" {
+			ldflags += fmt.Sprintf(
+				"-X main.AppName=%s ",
+				AppName,
+			)
+		}
+		ldflags += fmt.Sprintf("-X main.BinaryPath=%s ",
+			BinaryName,
 		)
+		ldflags += fmt.Sprintf("-X main.Args=%s",
+			strings.Join(DefaultArgs, " "),
+		)
+
+		cmd = newCmd("go",
+			"build",
+			"-o",
+			fullOut,
+			"-ldflags",
+			ldflags,
+		)
+		cmd.Dir = tmpDir
+
 		if Verbose {
 			cmd.Args = append(cmd.Args, "-v")
 		}
 		cmd.Args = append(cmd.Args, GoArgs...)
 		cmd.Args = append(cmd.Args, "main.go")
-		cmd.Dir = tmpDir
-		cmd.Stderr = os.Stderr
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
+
+		slog.Info("Building binary...")
 		err = cmd.Run()
 		if err != nil {
 			return err
@@ -95,6 +126,14 @@ var root = cobra.Command{
 
 		return nil
 	},
+}
+
+func newCmd(bin string, args ...string) *exec.Cmd {
+	cmd := exec.Command(bin, args...)
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	return cmd
 }
 
 var (
