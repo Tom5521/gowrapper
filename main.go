@@ -124,6 +124,12 @@ var root = cobra.Command{
 			return err
 		}
 
+		slog.Info("Deleting temporary directory...")
+		err = os.RemoveAll(tmpDir)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	},
 }
