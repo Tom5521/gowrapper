@@ -112,26 +112,4 @@ gowrapper/
 
 ## License
 
-MIT
-├── main.go           # CLI (cobra), orchestrates the build process
-├── template/
-│   └── main.go       # The wrapper code embedded into every generated binary
-└── util/
-    ├── compress.go   # tar + lz4 compression
-    └── decompress.go # tar extraction
-
-```
-
----
-
-## Dependencies
-
-- [spf13/cobra](https://github.com/spf13/cobra) — CLI
-- [pierrec/lz4](https://github.com/pierrec/lz4) — compression
-- [ncruces/zenity](https://github.com/ncruces/zenity) — native error dialogs in the generated binary
-
----
-
-## License
-
 [MIT](LICENSE)
