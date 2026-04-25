@@ -90,6 +90,9 @@ var root = cobra.Command{
 		}
 
 		var ldflags string
+		if WindowsGUI {
+			ldflags += "-H=windowsgui "
+		}
 		if AppName != "" {
 			ldflags += fmt.Sprintf(
 				"-X main.AppName=%s ",
@@ -151,10 +154,14 @@ var (
 	Verbose          bool
 	CompressionLevel int
 	GoArgs           []string
+	WindowsGUI       bool
 )
 
 func init() {
 	flags := root.Flags()
+	flags.BoolVar(&WindowsGUI, "windowsgui", false,
+		"Adds the flag -H=windowsgui into ldflags",
+	)
 	flags.BoolVarP(&Verbose, "verbose", "v", false,
 		"Set's the -v flag of the go compiler.",
 	)

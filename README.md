@@ -49,12 +49,13 @@ gowrapper \
 ```
 
 ```bash
-# Windows, with a name for the temp directory and lower compression for faster startup
+# Windows GUI app — no console window, lower compression for faster startup
 gowrapper \
-  --bundle ./dist/myapp \
-  --bin    myapp/myapp.exe \
-  --out    myapp-portable.exe \
-  --name   MyApp \
+  --bundle      ./dist/myapp \
+  --bin         myapp/myapp.exe \
+  --out         myapp-portable.exe \
+  --name        MyApp \
+  --windowsgui \
   --compression-level 3
 ```
 
@@ -70,6 +71,7 @@ gowrapper \
 | `--compression-level` | `-c` | `9` | lz4 compression level, 0 (fast) to 9 (smallest) |
 | `--verbose` | `-v` | false | Pass `-v` to the Go compiler |
 | `--go-args` | `-g` | none | Extra arguments forwarded to `go build` |
+| `--windowsgui` | | false | Adds `-H=windowsgui` to ldflags (hides the console window on Windows) |
 
 The compression level trades startup time for bundle size. Level 9 gives the smallest binary; level 0 (`lz4.Fast`) extracts the quickest. For most apps, somewhere in the middle is fine.
 
@@ -96,6 +98,28 @@ gowrapper/
 └── util/
     ├── compress.go   # tar + lz4 compression
     └── decompress.go # tar extraction
+```
+
+---
+
+## Dependencies
+
+- [spf13/cobra](https://github.com/spf13/cobra) — CLI
+- [pierrec/lz4](https://github.com/pierrec/lz4) — compression
+- [ncruces/zenity](https://github.com/ncruces/zenity) — native error dialogs in the generated binary
+
+---
+
+## License
+
+MIT
+├── main.go           # CLI (cobra), orchestrates the build process
+├── template/
+│   └── main.go       # The wrapper code embedded into every generated binary
+└── util/
+    ├── compress.go   # tar + lz4 compression
+    └── decompress.go # tar extraction
+
 ```
 
 ---
