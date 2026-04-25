@@ -10,11 +10,11 @@ require (
 
 require (
 	github.com/akavel/rsrc v0.10.2 // indirect
-	github.com/dchest/jsmin v0.0.0-20220218165748-59f39799265f // indirect
+	github.com/dchest/jsmin v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/josephspurrier/goversioninfo v1.4.1 // indirect
-	github.com/randall77/makefat v0.0.0-20210315173500-7ddd0e42c844 // indirect
-	github.com/spf13/pflag v1.0.9 // indirect
-	golang.org/x/image v0.20.0 // indirect
-	golang.org/x/sys v0.25.0 // indirect
+	github.com/josephspurrier/goversioninfo v1.5.0 // indirect
+	github.com/randall77/makefat v0.0.0-20260406194835-1b91746796b7 // indirect
+	github.com/spf13/pflag v1.0.10 // indirect
+	golang.org/x/image v0.39.0 // indirect
+	golang.org/x/sys v0.43.0 // indirect
 )
