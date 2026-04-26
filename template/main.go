@@ -4,6 +4,7 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"os/exec"
@@ -20,9 +21,10 @@ import (
 var embeddedData []byte
 
 var (
-	AppName    string
-	BinaryPath string
-	Args       string
+	AppName       string
+	BinaryPath    string
+	Args          string
+	NotCompressed string
 )
 
 func main() {
@@ -37,8 +39,13 @@ func main() {
 		panic(err)
 	}
 	bytesReader := bytes.NewReader(embeddedData)
-	lz4Reader := lz4.NewReader(bytesReader)
-	err = util.DecompressTar(lz4Reader, tempDir)
+	var reader io.Reader
+	if NotCompressed == "" {
+		reader = lz4.NewReader(bytesReader)
+	} else {
+		reader = bytesReader
+	}
+	err = util.DecompressTar(reader, tempDir)
 	if err != nil {
 		panic(err)
 	}

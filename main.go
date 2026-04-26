@@ -45,24 +45,29 @@ var root = cobra.Command{
 			return err
 		}
 
-		slog.Info("Compressing bundle...")
+		slog.Info("Packaging bundle...")
 
 		tarBuffer := &bytes.Buffer{}
 		err = util.PackageTar(BundlePath, tarBuffer)
 		if err != nil {
 			return err
 		}
-		// Reset the buffer counter.
-		tarBuffer = bytes.NewBuffer(tarBuffer.Bytes())
-		var compressedBuffer bytes.Buffer
-		err = util.CompressLz4(tarBuffer, &compressedBuffer, CompressionLevel)
-		if err != nil {
-			return err
+		data := tarBuffer.Bytes()
+		if !NoCompress {
+			slog.Info("Compressing bundle...")
+			// Reset the buffer counter.
+			tarBuffer = bytes.NewBuffer(tarBuffer.Bytes())
+			var compressedBuffer bytes.Buffer
+			err = util.CompressLz4(tarBuffer, &compressedBuffer, CompressionLevel)
+			if err != nil {
+				return err
+			}
+			data = compressedBuffer.Bytes()
 		}
 
 		err = os.WriteFile(
 			filepath.Join(tmpDir, "package.tar.lz4"),
-			compressedBuffer.Bytes(),
+			data,
 			os.ModePerm,
 		)
 		if err != nil {
@@ -92,6 +97,9 @@ var root = cobra.Command{
 		var ldflags string
 		if WindowsGUI {
 			ldflags += "-H=windowsgui "
+		}
+		if NoCompress {
+			ldflags += "-X main.NotCompressed=1 "
 		}
 		if AppName != "" {
 			ldflags += fmt.Sprintf(
@@ -155,10 +163,14 @@ var (
 	CompressionLevel int
 	GoArgs           []string
 	WindowsGUI       bool
+	NoCompress       bool
 )
 
 func init() {
 	flags := root.Flags()
+	flags.BoolVar(&NoCompress, "no-compress", false,
+		"Completely disables compression.",
+	)
 	flags.BoolVar(&WindowsGUI, "windowsgui", false,
 		"Adds the flag -H=windowsgui into ldflags",
 	)
