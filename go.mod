@@ -15,6 +15,6 @@ require (
 	github.com/josephspurrier/goversioninfo v1.5.0 // indirect
 	github.com/randall77/makefat v0.0.0-20260406194835-1b91746796b7 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
-	golang.org/x/image v0.39.0 // indirect
+	golang.org/x/image v0.41.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
 )
